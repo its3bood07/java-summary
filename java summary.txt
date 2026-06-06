@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ملخص البرمجة بـ Java | Java Programming Summary</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;600;700&display=swap');
+
+  :root {
+    --bg: #0d0f1a;
+    --surface: #141728;
+    --surface2: #1c2035;
+    --border: #2a2f4a;
+    --accent1: #6c63ff;
+    --accent2: #00d4aa;
+    --accent3: #ff6b6b;
+    --accent4: #ffd93d;
+    --text: #e2e8f0;
+    --text-muted: #8892b0;
+    --code-bg: #0a0c14;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Tajawal', 'Sora', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ---- HEADER ---- */
+  header {
+    background: linear-gradient(135deg, #0d0f1a 0%, #1a1040 50%, #0d1a2a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 30% 50%, rgba(108,99,255,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(0,212,170,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  header h1 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  header p { color: var(--text-muted); font-size: 1rem; }
+
+  /* ---- NAV ---- */
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1.2rem 1.5rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+  nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.3rem 0.9rem;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  nav a:hover { color: var(--accent2); border-color: var(--accent2); background: rgba(0,212,170,0.08); }
+
+  /* ---- MAIN ---- */
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  /* ---- CHAPTER CARD ---- */
+  .chapter {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 2.5rem;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .chapter:hover { border-color: var(--accent1); }
+
+  .chapter-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.4rem 1.8rem;
+    background: linear-gradient(90deg, var(--surface2), var(--surface));
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .chapter-num {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+  }
+  .ch1 { background: rgba(108,99,255,0.2); color: var(--accent1); border: 1px solid rgba(108,99,255,0.4); }
+  .ch2 { background: rgba(0,212,170,0.2); color: var(--accent2); border: 1px solid rgba(0,212,170,0.4); }
+  .ch3 { background: rgba(255,107,107,0.2); color: var(--accent3); border: 1px solid rgba(255,107,107,0.4); }
+  .ch4 { background: rgba(255,217,61,0.2); color: var(--accent4); border: 1px solid rgba(255,217,61,0.4); }
+  .ch5 { background: rgba(150,111,214,0.2); color: #c77dff; border: 1px solid rgba(150,111,214,0.4); }
+  .ch6 { background: rgba(72,199,142,0.2); color: #48c78e; border: 1px solid rgba(72,199,142,0.4); }
+
+  .chapter-title-wrap { flex: 1; }
+  .chapter-title-ar { font-size: 1.15rem; font-weight: 700; }
+  .chapter-title-en { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.1rem; }
+  .toggle-icon { color: var(--text-muted); font-size: 1.2rem; transition: transform 0.3s; }
+  .chapter.open .toggle-icon { transform: rotate(180deg); }
+
+  .chapter-body { padding: 1.8rem; display: none; }
+  .chapter.open .chapter-body { display: block; }
+
+  /* ---- SECTIONS ---- */
+  .section { margin-bottom: 1.8rem; }
+  .section:last-child { margin-bottom: 0; }
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section-title .icon { font-size: 1rem; }
+
+  /* ---- BILINGUAL GRID ---- */
+  .bilingual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+  }
+  @media (max-width: 650px) { .bilingual { grid-template-columns: 1fr; } }
+
+  .lang-box {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+  }
+  .lang-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    display: inline-block;
+  }
+  .ar-label { background: rgba(108,99,255,0.2); color: var(--accent1); }
+  .en-label { background: rgba(0,212,170,0.2); color: var(--accent2); }
+  .lang-box p, .lang-box li { font-size: 0.9rem; color: var(--text); }
+  .lang-box[dir="ltr"] { direction: ltr; text-align: left; }
+
+  /* ---- POINTS LIST ---- */
+  ul.points { list-style: none; padding: 0; }
+  ul.points li {
+    padding: 0.35rem 0 0.35rem 1.4rem;
+    position: relative;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+  ul.points li::before {
+    content: '▸';
+    position: absolute;
+    left: 0.2rem;
+    color: var(--accent2);
+    font-size: 0.7rem;
+    top: 0.5rem;
+  }
+  [dir="rtl"] ul.points li { padding: 0.35rem 1.4rem 0.35rem 0; }
+  [dir="rtl"] ul.points li::before { left: auto; right: 0.2rem; }
+
+  /* ---- CODE BLOCK ---- */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent1);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: 0.6rem 0;
+    direction: ltr;
+    text-align: left;
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: #a9b1d6;
+    line-height: 1.6;
+  }
+  .kw { color: #bb9af7; }
+  .str { color: #9ece6a; }
+  .num { color: #ff9e64; }
+  .cmt { color: #565f89; font-style: italic; }
+  .cls { color: #7dcfff; }
+  .fn { color: #7aa2f7; }
+
+  /* ---- TABLE ---- */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    direction: ltr;
+    text-align: left;
+    margin: 0.6rem 0;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+  .data-table th {
+    background: var(--surface2);
+    color: var(--accent2);
+    padding: 0.6rem 1rem;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba(42,47,74,0.5);
+    color: var(--text);
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(108,99,255,0.05); }
+
+  /* ---- BADGES ---- */
+  .badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.6rem;
+    border-radius: 99px;
+    margin: 0.15rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .badge-blue { background: rgba(108,99,255,0.2); color: var(--accent1); border: 1px solid rgba(108,99,255,0.4); }
+  .badge-green { background: rgba(0,212,170,0.2); color: var(--accent2); border: 1px solid rgba(0,212,170,0.4); }
+  .badge-red { background: rgba(255,107,107,0.2); color: var(--accent3); border: 1px solid rgba(255,107,107,0.4); }
+  .badge-yellow { background: rgba(255,217,61,0.2); color: var(--accent4); border: 1px solid rgba(255,217,61,0.4); }
+
+  /* ---- TIP BOX ---- */
+  .tip {
+    background: rgba(0,212,170,0.06);
+    border: 1px solid rgba(0,212,170,0.25);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    font-size: 0.85rem;
+    margin: 0.6rem 0;
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+  }
+  .tip .tip-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.05rem; }
+
+  .warn {
+    background: rgba(255,107,107,0.06);
+    border: 1px solid rgba(255,107,107,0.25);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    font-size: 0.85rem;
+    margin: 0.6rem 0;
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    color: var(--text);
+  }
+  .warn .tip-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.05rem; }
+
+  /* ---- FOOTER ---- */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ---- OPEN ALL BTN ---- */
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: 'Tajawal', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn:hover { border-color: var(--accent1); color: var(--accent1); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📘 ملخص البرمجة بـ Java</h1>
+  <p>Computer Programming 1 — Comprehensive Bilingual Summary | ملخص شامل ثنائي اللغة</p>
+</header>
+
+<nav>
+  <a href="#ch1">Ch.1 — مراجعة</a>
+  <a href="#ch2p1">Ch.2/1 — عمليات حسابية</a>
+  <a href="#ch2p2">Ch.2/2 — مقارنة ومنطق</a>
+  <a href="#ch2p3">Ch.2/3 — تحويل أنواع</a>
+  <a href="#ch3p1">Ch.3/1 — دوال مدمجة</a>
+  <a href="#ch3p2">Ch.3/2 — دوال مخصصة</a>
+  <a href="#ch4">Ch.4 — جمل شرطية</a>
+  <a href="#ch5p1">Ch.5/1 — while</a>
+  <a href="#ch5p2">Ch.5/2 — for & do-while</a>
+  <a href="#ch6p1">Ch.6/1 — مصفوفات</a>
+  <a href="#ch6p2">Ch.6/2 — تطبيقات</a>
+</nav>
+
+<main>
+  <div class="controls">
+    <button class="btn" onclick="openAll()">▼ فتح الكل | Expand All</button>
+    <button class="btn" onclick="closeAll()">▲ إغلاق الكل | Collapse All</button>
+  </div>
+
+  <!-- ======================== CH 1 ======================== -->
+  <div class="chapter open" id="ch1">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-num ch1">Ch1</div>
+      <div class="chapter-title-wrap">
+        <div class="chapter-title-ar">الفصل الأول — المراجعة الأساسية</div>
+        <div class="chapter-title-en">Chapter 1 — Review: Java Basics</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="chapter-body">
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🖥️</span> البرنامج الأول / First Program</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">عربي</span>
+            <p>كل برنامج Java يبدأ بدالة <code>main</code> وهي نقطة الدخول. كل جملة تنتهي بـ <code>;</code></p>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">English</span>
+            <p>Every Java program starts with the <code>main</code> method — the entry point. Every statement ends with <code>;</code></p>
+          </div>
+        </div>
+        <pre><code><span class="kw">public class</span> <span class="cls">Welcome</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        System.out.println(<span class="str">"Welcome to Java!"</span>);
+    }
+}</code></pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">📦</span> أنواع البيانات / Data Types</div>
+        <table class="data-table">
+          <tr><th>النوع / Type</th><th>الوصف / Description</th><th>مثال / Example</th></tr>
+          <tr><td><span class="badge badge-blue">int</span></td><td>أعداد صحيحة / Integers</td><td><code>int x = 5;</code></td></tr>
+          <tr><td><span class="badge badge-blue">double</span></td><td>أعداد عشرية / Decimals</td><td><code>double pi = 3.14;</code></td></tr>
+          <tr><td><span class="badge badge-blue">char</span></td><td>حرف واحد / Single char</td><td><code>char c = 'A';</code></td></tr>
+          <tr><td><span class="badge badge-blue">boolean</span></td><td>صح/خطأ / True or False</td><td><code>boolean b = true;</code></td></tr>
+          <tr><td><span class="badge badge-blue">String</span></td><td>نص / Text</td><td><code>String s = "Hi";</code></td></tr>
+          <tr><td><span class="badge badge-yellow">byte / short / long / float</span></td><td>أنواع رقمية أخرى / Other numeric</td><td>—</td></tr>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">💬</span> التعليقات / Comments</div>
+        <pre><code><span class="cmt">// تعليق سطر واحد — Single-line comment</span>
+<span class="cmt">/* تعليق
+   متعدد الأسطر — Multi-line comment */</span></code></pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🏷️</span> قواعد تسمية المتغيرات / Identifiers Rules</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">عربي</span>
+            <ul class="points">
+              <li>تبدأ بحرف أو <code>$</code> أو <code>_</code></li>
+              <li>Java حساسة لحالة الأحرف (كبير/صغير)</li>
+              <li>لا يمكن استخدام الكلمات المحجوزة</li>
+              <li>خاطئة: <code>123abc</code>, <code>-salary</code></li>
+            </ul>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">English</span>
+            <ul class="points">
+              <li>Start with a letter, <code>$</code>, or <code>_</code></li>
+              <li>Java is case-sensitive</li>
+              <li>Cannot use reserved keywords</li>
+              <li>Invalid: <code>123abc</code>, <code>-salary</code></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">📥</span> قراءة المدخلات / Reading Input (Scanner)</div>
+        <pre><code><span class="kw">import</span> java.util.Scanner;
+
+Scanner input = <span class="kw">new</span> <span class="cls">Scanner</span>(System.in);
+<span class="kw">int</span>    num    = input.nextInt();
+<span class="kw">double</span> d      = input.nextDouble();
+<span class="cls">String</span> s      = input.nextLine();  <span class="cmt">// reads full line</span></code></pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🔗</span> دمج النصوص / String Concatenation</div>
+        <pre><code><span class="cls">String</span> msg = <span class="str">"Chapter "</span> + <span class="num">2</span>;        <span class="cmt">// "Chapter 2"</span>
+<span class="cls">String</span> y   = <span class="num">9.4</span> + <span class="str">" Marks"</span>;     <span class="cmt">// "9.4 Marks"</span>
+System.out.println(<span class="str">"Hello\n\tWorld"</span>); <span class="cmt">// Escape: \n \t \\ \" \'</span></code></pre>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================== CH 2 PART 1 ======================== -->
+  <div class="chapter open" id="ch2p1">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-num ch2">2/1</div>
+      <div class="chapter-title-wrap">
+        <div class="chapter-title-ar">الفصل الثاني — الجزء 1: العمليات الحسابية</div>
+        <div class="chapter-title-en">Chapter 2 — Part 1: Arithmetic Operators</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="chapter-body">
+
+      <div class="section">
+        <div class="section-title"><span class="icon">➕</span> العمليات الحسابية / Arithmetic Operators</div>
+        <table class="data-table">
+          <tr><th>رمز / Op</th><th>المعنى / Meaning</th><th>مثال / Example</th></tr>
+          <tr><td><code>+</code></td><td>جمع / Addition</td><td><code>5+3 = 8</code></td></tr>
+          <tr><td><code>-</code></td><td>طرح / Subtraction</td><td><code>5-3 = 2</code></td></tr>
+          <tr><td><code>*</code></td><td>ضرب / Multiplication</td><td><code>5*3 = 15</code></td></tr>
+          <tr><td><code>/</code></td><td>قسمة / Division</td><td><code>5/2 = 2</code> (int) | <code>5.0/2 = 2.5</code></td></tr>
+          <tr><td><code>%</code></td><td>باقي القسمة / Remainder</td><td><code>5%2 = 1</code></td></tr>
+        </table>
+        <div class="warn"><span class="tip-icon">⚠️</span> <span><strong>مهم / Important:</strong> عندما يكون كلا المعاملين int، النتيجة int. إذا كان أحدهما double، النتيجة double.<br>When both operands are int → result is int. If one is double → result is double.</span></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">⬆️</span> مشغلات الزيادة والنقصان / Increment & Decrement</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">عربي</span>
+            <ul class="points">
+              <li><strong>Prefix (++x):</strong> يزيد أولاً ثم يُستخدم</li>
+              <li><strong>Postfix (x++):</strong> يُستخدم أولاً ثم يزيد</li>
+            </ul>
+            <pre><code><span class="kw">int</span> x=10;
+y = 10 * x++; <span class="cmt">// y=100, x=11</span>
+y = 10 * ++x; <span class="cmt">// y=110, x=11</span></code></pre>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">English</span>
+            <ul class="points">
+              <li><strong>Prefix (++x):</strong> increment first, then use</li>
+              <li><strong>Postfix (x++):</strong> use first, then increment</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">📋</span> مشغلات الإسناد المختصرة / Augmented Assignment</div>
+        <table class="data-table">
+          <tr><th>مختصر</th><th>ما يعادله</th></tr>
+          <tr><td><code>a += b</code></td><td><code>a = a + b</code></td></tr>
+          <tr><td><code>a -= b</code></td><td><code>a = a - b</code></td></tr>
+          <tr><td><code>a *= b</code></td><td><code>a = a * b</code></td></tr>
+          <tr><td><code>a /= b</code></td><td><code>a = a / b</code></td></tr>
+          <tr><td><code>a %= b</code></td><td><code>a = a % b</code></td></tr>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">📊</span> أولوية العمليات / Operator Precedence</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">عربي</span>
+            <ul class="points">
+              <li>1. الأقواس <code>()</code></li>
+              <li>2. postfix: <code>x++</code>, <code>x--</code></li>
+              <li>3. unary: <code>++x</code>, <code>--x</code>, <code>!</code></li>
+              <li>4. ضرب/قسمة: <code>* / %</code></li>
+              <li>5. جمع/طرح: <code>+ -</code></li>
+              <li>6. المقارنة والإسناد</li>
+            </ul>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">English</span>
+            <p>Operators with higher precedence execute first. Equal-precedence operators execute left to right.</p>
+            <pre><code>3 + 4 * 4 + 5*(4+3) - 1
+<span class="cmt">// = 3 + 16 + 35 - 1 = 53</span></code></pre>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================== CH 2 PART 2 ======================== -->
+  <div class="chapter" id="ch2p2">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-num ch2">2/2</div>
+      <div class="chapter-title-wrap">
+        <div class="chapter-title-ar">الفصل الثاني — الجزء 2: مشغلات المقارنة والمنطق</div>
+        <div class="chapter-title-en">Chapter 2 — Part 2: Comparison & Logical Operators</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="chapter-body">
+
+      <div class="section">
+        <div class="section-title"><span class="icon">⚖️</span> مشغلات المقارنة / Comparison Operators (x=5)</div>
+        <table class="data-table">
+          <tr><th>رمز</th><th>المعنى</th><th>مثال</th><th>النتيجة</th></tr>
+          <tr><td><code>==</code></td><td>يساوي / Equal to</td><td><code>x==5</code></td><td>true</td></tr>
+          <tr><td><code>!=</code></td><td>لا يساوي / Not equal</td><td><code>x!=25</code></td><td>true</td></tr>
+          <tr><td><code>&gt;</code></td><td>أكبر من / Greater than</td><td><code>x&gt;20</code></td><td>false</td></tr>
+          <tr><td><code>&gt;=</code></td><td>أكبر من أو يساوي</td><td><code>x&gt;=3</code></td><td>true</td></tr>
+          <tr><td><code>&lt;</code></td><td>أصغر من / Less than</td><td><code>x&lt;5</code></td><td>false</td></tr>
+          <tr><td><code>&lt;=</code></td><td>أصغر من أو يساوي</td><td><code>x&lt;=5</code></td><td>true</td></tr>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🔀</span> المشغلات المنطقية / Logical Operators</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">عربي</span>
+            <ul class="points">
+              <li><strong>&amp;&amp; (AND):</strong> كلا الشرطين صحيح</li>
+              <li><strong>|| (OR):</strong> أحد الشرطين صحيح</li>
+              <li><strong>! (NOT):</strong> عكس القيمة</li>
+            </ul>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">English</span>
+            <table class="data-table">
+              <tr><th>p1</th><th>p2</th><th>p1&amp;&amp;p2</th><th>p1||p2</th></tr>
+              <tr><td>T</td><td>T</td><td>T</td><td>T</td></tr>
+              <tr><td>T</td><td>F</td><td>F</td><td>T</td></tr>
+              <tr><td>F</td><td>T</td><td>F</td><td>T</td></tr>
+              <tr><td>F</td><td>F</td><td>F</td><td>F</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================== CH 2 PART 3 ======================== -->
+  <div class="chapter" id="ch2p3">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-num ch2">2/3</div>
+      <div class="chapter-title-wrap">
+        <div class="chapter-title-ar">الفصل الثاني — الجزء 3: تحويل أنواع البيانات (Casting)</div>
+        <div class="chapter-title-en">Chapter 2 — Part 3: Type Casting</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="chapter-body">
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🔄</span> نوعا التحويل / Two Types of Casting</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">Widening (توسيع — تلقائي)</span>
+            <ul class="points">
+              <li>من نوع صغير إلى كبير</li>
+              <li>يتم تلقائياً بدون كود إضافي</li>
+            </ul>
+            <pre><code><span class="kw">int</span> x = 5;
+<span class="kw">double</span> y = x; <span class="cmt">// y=5.0 ✓</span></code></pre>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">Narrowing (manual required)</span>
+            <ul class="points">
+              <li>From larger to smaller type</li>
+              <li>Must use explicit cast — truncates decimals</li>
+            </ul>
+            <pre><code><span class="kw">double</span> a = 3.8;
+<span class="kw">int</span> b = (<span class="kw">int</span>) a; <span class="cmt">// b=3, not 4!</span></code></pre>
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><span><strong>مهم:</strong> Casting لا يغيّر المتغير الأصلي. الكسور تُحذف (لا تُقرَّب). الترتيب من الأصغر للأكبر: <code>byte → short → int → long → float → double</code></span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================== CH 3 PART 1 ======================== -->
+  <div class="chapter" id="ch3p1">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-num ch3">3/1</div>
+      <div class="chapter-title-wrap">
+        <div class="chapter-title-ar">الفصل الثالث — الجزء 1: الدوال المدمجة (Math & String)</div>
+        <div class="chapter-title-en">Chapter 3 — Part 1: Built-in Methods</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="chapter-body">
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🔢</span> دوال Math</div>
+        <table class="data-table">
+          <tr><th>الدالة / Method</th><th>الوصف</th><th>مثال</th></tr>
+          <tr><td><code>Math.sqrt(x)</code></td><td>الجذر التربيعي</td><td><code>Math.sqrt(25) = 5.0</code></td></tr>
+          <tr><td><code>Math.pow(x,y)</code></td><td>الأس</td><td><code>Math.pow(2,3) = 8.0</code></td></tr>
+          <tr><td><code>Math.abs(x)</code></td><td>القيمة المطلقة</td><td><code>Math.abs(-5) = 5</code></td></tr>
+          <tr><td><code>Math.max(a,b)</code></td><td>الأكبر</td><td><code>Math.max(3,7) = 7</code></td></tr>
+          <tr><td><code>Math.min(a,b)</code></td><td>الأصغر</td><td><code>Math.min(3,7) = 3</code></td></tr>
+          <tr><td><code>Math.round(x)</code></td><td>التقريب</td><td><code>Math.round(3.7) = 4</code></td></tr>
+          <tr><td><code>Math.random()</code></td><td>عشوائي [0,1)</td><td><code>0.0 ≤ x &lt; 1.0</code></td></tr>
+          <tr><td><code>Math.PI</code></td><td>ثابت π</td><td><code>3.14159...</code></td></tr>
+        </table>
+        <pre><code><span class="cmt">// رقم عشوائي بين min و max</span>
+<span class="kw">int</span> rand = (<span class="kw">int</span>)(Math.random() * (max - min + <span class="num">1</span>) + min);</code></pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🔤</span> دوال String</div>
+        <table class="data-table">
+          <tr><th>الدالة</th><th>الوصف</th><th>مثال (str="Welcome To Java")</th></tr>
+          <tr><td><code>.length()</code></td><td>عدد الأحرف</td><td><code>str.length() = 15</code></td></tr>
+          <tr><td><code>.charAt(i)</code></td><td>الحرف في الموضع i (تبدأ من 0)</td><td><code>str.charAt(5) = 'm'</code></td></tr>
+          <tr><td><code>.indexOf(s)</code></td><td>موضع أول ظهور</td><td><code>str.indexOf("To") = 8</code></td></tr>
+          <tr><td><code>.indexOf(s, from)</code></td><td>البحث من موضع محدد</td><td><code>str.indexOf("e",2) = 6</code></td></tr>
+          <tr><td><code>.substring(i)</code></td><td>من i حتى النهاية</td><td><code>str.substring(11) = "Java"</code></td></tr>
+          <tr><td><code>.substring(i,j)</code></td><td>من i حتى j-1</td><td><code>str.substring(8,10) = "To"</code></td></tr>
+          <tr><td><code>.lastIndexOf(s)</code></td><td>آخر ظهور</td><td>—</td></tr>
+        </table>
+        <div class="tip"><span class="tip-icon">💡</span><span>indexOf تُعيد -1 إذا لم يوجد العنصر. الفهرسة تبدأ من 0.</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================== CH 3 PART 2 ======================== -->
+  <div class="chapter" id="ch3p2">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-num ch3">3/2</div>
+      <div class="chapter-title-wrap">
+        <div class="chapter-title-ar">الفصل الثالث — الجزء 2: الدوال المخصصة</div>
+        <div class="chapter-title-en">Chapter 3 — Part 2: User-Defined Methods</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="chapter-body">
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🧩</span> تعريف الدالة / Method Declaration Syntax</div>
+        <pre><code>[modifier] [static] returnType methodName(parameters) {
+    <span class="cmt">// method body</span>
+    return value; <span class="cmt">// للدوال التي تُعيد قيمة</span>
+}
+
+<span class="cmt">// أمثلة / Examples:</span>
+<span class="kw">public static int</span> <span class="fn">max</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) { return a > b ? a : b; }
+<span class="kw">public static void</span> <span class="fn">printHello</span>() { System.out.println(<span class="str">"Hello"</span>); }</code></pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">📌</span> أنواع الدوال / Types of Methods</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">عربي</span>
+            <ul class="points">
+              <li><strong>void:</strong> لا تُعيد قيمة — تُستدعى كجملة مستقلة</li>
+              <li><strong>return-value:</strong> تُعيد قيمة — تُستخدم في تعبير أو إسناد</li>
+              <li><strong>بدون معاملات (Simple):</strong> لا تأخذ مدخلات</li>
+              <li><strong>بمعاملات (Parameterized):</strong> تأخذ مدخلات</li>
+            </ul>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">English</span>
+            <ul class="points">
+              <li>Formal parameters → in method signature</li>
+              <li>Arguments → values passed at call time</li>
+              <li>Method only receives a copy of the value (pass by value)</li>
+              <li>Changing a parameter does NOT affect the original variable</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🔭</span> نطاق المتغيرات / Variable Scope</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">عربي</span>
+            <p>المتغير المحلي (Local Variable) يبدأ نطاقه من مكان تعريفه وينتهي عند نهاية الكتلة <code>{ }</code> التي يوجد فيها.</p>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">English</span>
+            <p>A local variable's scope starts from its declaration and ends at the closing brace of its containing block. Must be declared before use.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================== CH 4 ======================== -->
+  <div class="chapter" id="ch4">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-num ch4">Ch4</div>
+      <div class="chapter-title-wrap">
+        <div class="chapter-title-ar">الفصل الرابع — الجمل الشرطية (Selection)</div>
+        <div class="chapter-title-en">Chapter 4 — Conditional Statements</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="chapter-body">
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🔀</span> if / if-else / else-if</div>
+        <pre><code><span class="cmt">// 1. if-else بسيط</span>
+<span class="kw">if</span> (condition) {
+    <span class="cmt">// if true</span>
+} <span class="kw">else</span> {
+    <span class="cmt">// if false</span>
+}
+
+<span class="cmt">// 2. متعدد (Mutually Exclusive)</span>
+<span class="kw">if</span> (score >= <span class="num">90</span>)      System.out.println(<span class="str">"A"</span>);
+<span class="kw">else if</span> (score >= <span class="num">80</span>) System.out.println(<span class="str">"B"</span>);
+<span class="kw">else if</span> (score >= <span class="num">70</span>) System.out.println(<span class="str">"C"</span>);
+<span class="kw">else</span>                  System.out.println(<span class="str">"F"</span>);</code></pre>
+        <div class="warn"><span class="tip-icon">⚠️</span><span>ترتيب الشروط مهم جداً! ابدأ دائماً بالشرط الأكبر ثم الأصغر.</span></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🪆</span> if المتداخل / Nested if</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">عربي</span>
+            <p>جملة if داخل جملة if أخرى. الشروط الداخلية تُفحص فقط إذا كان الشرط الخارجي صحيحاً.</p>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">English</span>
+            <p>An if statement inside another if block. Inner conditions only checked when outer condition is true.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🔲</span> switch Statement</div>
+        <pre><code><span class="kw">switch</span> (variable) {
+    <span class="kw">case</span> <span class="num">1</span>:
+        System.out.println(<span class="str">"Sunday"</span>);
+        <span class="kw">break</span>;  <span class="cmt">// مهم! بدونه يكمل للـ case التالي</span>
+    <span class="kw">case</span> <span class="num">2</span>:
+        System.out.println(<span class="str">"Monday"</span>);
+        <span class="kw">break</span>;
+    <span class="kw">default</span>:  <span class="cmt">// اختياري</span>
+        System.out.println(<span class="str">"Invalid"</span>);
+}</code></pre>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">قواعد switch</span>
+            <ul class="points">
+              <li>أنواع مقبولة: <code>int, short, byte, char, String</code></li>
+              <li><code>break</code> اختياري لكن مهم لتجنب الـ fall-through</li>
+              <li><code>default</code> اختياري — يُنفَّذ إذا لم يتطابق أي case</li>
+              <li>قيم الـ case يجب أن تكون literals وليس متغيرات</li>
+            </ul>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">Fall-through behavior</span>
+            <p>Without <code>break</code>, execution continues to the next case. Multiple cases can share the same code:</p>
+            <pre><code><span class="kw">case</span> <span class="str">'A'</span>:
+<span class="kw">case</span> <span class="str">'a'</span>:
+    System.out.print(<span class="str">"Apple"</span>); <span class="kw">break</span>;</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">❓</span> المشغل الثلاثي / Ternary Operator</div>
+        <pre><code>result = condition ? value_if_true : value_if_false;
+
+<span class="cmt">// مثال:</span>
+<span class="kw">int</span> max = (a >= b) ? a : b;
+<span class="cls">String</span> s = (x >= <span class="num">0</span>) ? <span class="str">"positive"</span> : <span class="str">"negative"</span>;</code></pre>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================== CH 5 PART 1 ======================== -->
+  <div class="chapter" id="ch5p1">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-num ch5">5/1</div>
+      <div class="chapter-title-wrap">
+        <div class="chapter-title-ar">الفصل الخامس — الجزء 1: حلقة while</div>
+        <div class="chapter-title-en">Chapter 5 — Part 1: while Loops</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="chapter-body">
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🔄</span> مكونات الحلقة / Loop Elements</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">عربي</span>
+            <ul class="points">
+              <li>تهيئة المتغير / Initialization</li>
+              <li>شرط التكرار / Loop condition</li>
+              <li>جسم الحلقة / Loop body</li>
+              <li>تحديث المتغير / Update (inc/dec)</li>
+            </ul>
+            <p style="margin-top:0.5rem; font-size:0.85rem;">⚠️ إذا لم يتغير الشرط إلى false → حلقة لا نهائية!</p>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">while syntax</span>
+            <pre><code>initialization;
+<span class="kw">while</span> (condition) {
+    <span class="cmt">// loop body</span>
+    update;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">💡</span> مثال while / while Example</div>
+        <pre><code><span class="cmt">// طباعة أرقام 1 إلى 5</span>
+<span class="kw">int</span> i = <span class="num">1</span>;
+<span class="kw">while</span> (i <= <span class="num">5</span>) {
+    System.out.println(i);
+    i++;
+}</code></pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🛑</span> Sentinel Value (قيمة الإيقاف)</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">عربي</span>
+            <p>قيمة خاصة تُدخلها للإيقاف. تُستخدم عندما لا نعرف عدد التكرارات مسبقاً.</p>
+            <p>مثال: أدخل -1 للإيقاف</p>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">English</span>
+            <pre><code><span class="kw">while</span> (input != -<span class="num">1</span>) {
+    <span class="cmt">// process input</span>
+    input = scanner.nextInt();
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================== CH 5 PART 2 ======================== -->
+  <div class="chapter" id="ch5p2">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-num ch5">5/2</div>
+      <div class="chapter-title-wrap">
+        <div class="chapter-title-ar">الفصل الخامس — الجزء 2: حلقات for و do-while</div>
+        <div class="chapter-title-en">Chapter 5 — Part 2: for and do-while Loops</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="chapter-body">
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🔁</span> حلقة do-while</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">عربي</span>
+            <p>تُنفَّذ الحلقة <strong>مرة واحدة على الأقل</strong> قبل فحص الشرط. الفرق عن while: الشرط يُفحص <em>بعد</em> التنفيذ.</p>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">English</span>
+            <p>Executes body <strong>at least once</strong> before checking condition. Good for menus or input validation.</p>
+          </div>
+        </div>
+        <pre><code>initialization;
+<span class="kw">do</span> {
+    <span class="cmt">// loop body — runs at least once</span>
+    update;
+} <span class="kw">while</span> (condition);</code></pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🔢</span> حلقة for</div>
+        <pre><code><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">10</span>; i++) {
+    System.out.println(i);
+}
+<span class="cmt">// مكافئة لـ / Equivalent to:</span>
+<span class="kw">int</span> i = <span class="num">0</span>;
+<span class="kw">while</span> (i < <span class="num">10</span>) { System.out.println(i); i++; }</code></pre>
+        <div class="tip"><span class="tip-icon">💡</span><span>استخدم <code>for</code> عندما تعرف عدد التكرارات مسبقاً. استخدم <code>while/do-while</code> عندما لا تعرف.</span></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🪆</span> الحلقات المتداخلة / Nested Loops</div>
+        <pre><code><span class="kw">for</span> (<span class="kw">int</span> i=<span class="num">1</span>; i<=<span class="num">5</span>; i++) {
+    <span class="kw">for</span> (<span class="kw">int</span> j=<span class="num">1</span>; j<=<span class="num">3</span>; j++) {
+        System.out.print(<span class="str">"*"</span>);
+    }
+    System.out.println();  <span class="cmt">// سطر جديد</span>
+}
+<span class="cmt">// الناتج: 5 صفوف، كل صف 3 نجوم</span></code></pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">⏭️</span> break و continue</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">عربي</span>
+            <ul class="points">
+              <li><code>break</code>: يخرج من الحلقة فوراً</li>
+              <li><code>continue</code>: يتخطى التكرار الحالي ويكمل للتالي</li>
+            </ul>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">English</span>
+            <pre><code><span class="cmt">// break: exits loop at i=5</span>
+<span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>; i<=<span class="num">10</span>; i++){
+  <span class="kw">if</span>(i==<span class="num">5</span>) <span class="kw">break</span>;
+  System.out.println(i); <span class="cmt">// 0,1,2,3,4</span>
+}
+<span class="cmt">// continue: skips i=5</span>
+<span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>; i<=<span class="num">10</span>; i++){
+  <span class="kw">if</span>(i==<span class="num">5</span>) <span class="kw">continue</span>;
+  System.out.println(i); <span class="cmt">// 0..4, 6..10</span>
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================== CH 6 PART 1 ======================== -->
+  <div class="chapter" id="ch6p1">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-num ch6">6/1</div>
+      <div class="chapter-title-wrap">
+        <div class="chapter-title-ar">الفصل السادس — الجزء 1: المصفوفات</div>
+        <div class="chapter-title-en">Chapter 6 — Part 1: Arrays</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="chapter-body">
+
+      <div class="section">
+        <div class="section-title"><span class="icon">📐</span> تعريف وإنشاء المصفوفة / Declaration & Initialization</div>
+        <pre><code><span class="cmt">// إنشاء مصفوفة 1D</span>
+<span class="kw">int</span>[] marks = <span class="kw">new int</span>[<span class="num">5</span>]; <span class="cmt">// 5 عناصر، كلها صفر</span>
+marks[<span class="num">0</span>] = <span class="num">90</span>; marks[<span class="num">1</span>] = <span class="num">85</span>; marks[<span class="num">2</span>] = <span class="num">95</span>;
+
+<span class="cmt">// إنشاء وتهيئة في نفس الوقت</span>
+<span class="kw">int</span>[] a = {<span class="num">90</span>, <span class="num">85</span>, <span class="num">95</span>, <span class="num">92</span>, <span class="num">89</span>};
+<span class="cls">String</span>[] days = {<span class="str">"Sat"</span>, <span class="str">"Sun"</span>, <span class="str">"Mon"</span>};
+
+<span class="cmt">// طول المصفوفة</span>
+System.out.println(a.length); <span class="cmt">// 5</span></code></pre>
+        <div class="warn"><span class="tip-icon">⚠️</span><span>الفهرسة تبدأ من 0. آخر عنصر في index <code>length-1</code>. الوصول لـ index خارج النطاق = خطأ!</span></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">⚙️</span> القيم الافتراضية / Default Values</div>
+        <table class="data-table">
+          <tr><th>النوع</th><th>القيمة الافتراضية</th></tr>
+          <tr><td><code>int, byte, short, long</code></td><td><code>0</code></td></tr>
+          <tr><td><code>double, float</code></td><td><code>0.0</code></td></tr>
+          <tr><td><code>boolean</code></td><td><code>false</code></td></tr>
+          <tr><td><code>char</code></td><td><code>' '</code> (مسافة)</td></tr>
+          <tr><td><code>String</code></td><td><code>null</code></td></tr>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🔄</span> التكرار مع المصفوفات / Loops with Arrays</div>
+        <pre><code><span class="cmt">// for عادي</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < marks.length; i++) {
+    System.out.println(marks[i]);
+}
+
+<span class="cmt">// for-each (أبسط للقراءة فقط)</span>
+<span class="kw">for</span> (<span class="kw">int</span> m : marks) {
+    System.out.println(m);
+}</code></pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🏗️</span> المصفوفات ثنائية الأبعاد / 2D Arrays</div>
+        <pre><code><span class="cmt">// إنشاء 5 صفوف × 3 أعمدة</span>
+<span class="kw">int</span>[][] marks = <span class="kw">new int</span>[<span class="num">5</span>][<span class="num">3</span>];
+marks[<span class="num">0</span>][<span class="num">0</span>] = <span class="num">90</span>; <span class="cmt">// الطالب 1، الدرجة 1</span>
+
+<span class="cmt">// تهيئة مباشرة</span>
+<span class="cls">String</span>[][] schedule = {
+    {<span class="str">"Sat"</span>, <span class="str">"Ahmad"</span>},
+    {<span class="str">"Sun"</span>, <span class="str">"Mohammed"</span>}
+};
+
+<span class="cmt">// التكرار في 2D</span>
+<span class="kw">for</span> (<span class="kw">int</span> i=<span class="num">0</span>; i<marks.length; i++)
+    <span class="kw">for</span> (<span class="kw">int</span> j=<span class="num">0</span>; j<marks[i].length; j++)
+        System.out.print(marks[i][j]);</code></pre>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================== CH 6 PART 2 ======================== -->
+  <div class="chapter" id="ch6p2">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-num ch6">6/2</div>
+      <div class="chapter-title-wrap">
+        <div class="chapter-title-ar">الفصل السادس — الجزء 2: تطبيقات المصفوفات</div>
+        <div class="chapter-title-en">Chapter 6 — Part 2: Array Operations</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="chapter-body">
+
+      <div class="section">
+        <div class="section-title"><span class="icon">➕</span> مجموع ومتوسط المصفوفة / Sum & Average</div>
+        <pre><code><span class="kw">public static double</span> <span class="fn">sum</span>(<span class="kw">int</span>[] arr) {
+    <span class="kw">int</span> total = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> x : arr) total += x;
+    <span class="kw">return</span> total;
+}
+<span class="kw">public static double</span> <span class="fn">avg</span>(<span class="kw">int</span>[] arr) {
+    <span class="kw">return</span> sum(arr) / arr.length;
+}</code></pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🏆</span> العنصر الأكبر / Maximum Element</div>
+        <pre><code><span class="kw">public static int</span> <span class="fn">max</span>(<span class="kw">int</span>[] arr) {
+    <span class="kw">int</span> max = arr[<span class="num">0</span>]; <span class="cmt">// افترض أن الأول هو الأكبر</span>
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i < arr.length; i++)
+        <span class="kw">if</span> (arr[i] > max) max = arr[i];
+    <span class="kw">return</span> max;
+}</code></pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🔍</span> البحث في المصفوفة / Linear Search</div>
+        <pre><code><span class="kw">public static int</span> <span class="fn">search</span>(<span class="kw">int</span>[] arr, <span class="kw">int</span> key) {
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < arr.length; i++)
+        <span class="kw">if</span> (arr[i] == key) <span class="kw">return</span> i; <span class="cmt">// الموضع</span>
+    <span class="kw">return</span> -<span class="num">1</span>; <span class="cmt">// غير موجود</span>
+}
+<span class="cmt">// البحث عن آخر ظهور — ابدأ من النهاية</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = arr.length-<span class="num">1</span>; i >= <span class="num">0</span>; i--) { ... }</code></pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">📊</span> عدّ التكرارات / Counting Frequency</div>
+        <pre><code><span class="kw">public static int</span> <span class="fn">frequency</span>(<span class="kw">int</span>[] arr, <span class="kw">int</span> val) {
+    <span class="kw">int</span> count = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> x : arr)
+        <span class="kw">if</span> (x == val) count++;
+    <span class="kw">return</span> count;
+}</code></pre>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">📋</span> نسخ المصفوفات / Copying Arrays</div>
+        <div class="bilingual">
+          <div class="lang-box">
+            <span class="lang-label ar-label">Shallow Copy (سطحية)</span>
+            <ul class="points">
+              <li>نسخ المرجع فقط — كلا المتغيرين يشيران لنفس البيانات</li>
+              <li>تغيير عبر أحدهما يؤثر على الآخر!</li>
+            </ul>
+            <pre><code><span class="kw">int</span>[] b = a; <span class="cmt">// shallow</span></code></pre>
+          </div>
+          <div class="lang-box" dir="ltr">
+            <span class="lang-label en-label">Deep Copy (عميقة)</span>
+            <ul class="points">
+              <li>Creates independent copy — changes don't affect original</li>
+            </ul>
+            <pre><code><span class="kw">int</span>[] b = <span class="kw">new int</span>[a.length];
+<span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>; i<a.length; i++)
+    b[i] = a[i]; <span class="cmt">// deep copy</span></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🎯</span> تمرير وإعادة المصفوفات / Pass & Return Arrays</div>
+        <pre><code><span class="cmt">// تمرير مصفوفة كمعامل</span>
+<span class="kw">public static void</span> <span class="fn">printArray</span>(<span class="kw">int</span>[] arr) { ... }
+
+<span class="cmt">// إعادة مصفوفة من دالة</span>
+<span class="kw">public static int</span>[] <span class="fn">createArray</span>() {
+    <span class="kw">int</span>[] arr = <span class="kw">new int</span>[<span class="num">3</span>];
+    arr[<span class="num">0</span>] = <span class="num">10</span>;
+    <span class="kw">return</span> arr;
+}</code></pre>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- QUICK REFERENCE CARD -->
+  <div class="chapter open" style="border-color: var(--accent4);">
+    <div class="chapter-header" style="background: linear-gradient(90deg, rgba(255,217,61,0.08), var(--surface));">
+      <div class="chapter-num" style="background:rgba(255,217,61,0.2); color:var(--accent4); border:1px solid rgba(255,217,61,0.4);">⚡</div>
+      <div class="chapter-title-wrap">
+        <div class="chapter-title-ar">بطاقة المراجعة السريعة — أهم النقاط</div>
+        <div class="chapter-title-en">Quick Reference Card — Key Exam Points</div>
+      </div>
+      <span class="toggle-icon" style="visibility:hidden">▾</span>
+    </div>
+    <div class="chapter-body" style="display:block;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+        <div class="lang-box" dir="ltr">
+          <span class="lang-label en-label">✓ int/int → int (5/2=2)</span>
+          <p>Any double operand → result is double</p>
+        </div>
+        <div class="lang-box" dir="ltr">
+          <span class="lang-label en-label">✓ Narrowing Cast truncates</span>
+          <p><code>(int) 3.8 = 3</code>, NOT 4</p>
+        </div>
+        <div class="lang-box" dir="ltr">
+          <span class="lang-label en-label">✓ String index starts at 0</span>
+          <p><code>"Java".charAt(0) = 'J'</code></p>
+        </div>
+        <div class="lang-box" dir="ltr">
+          <span class="lang-label en-label">✓ switch fall-through</span>
+          <p>Without <code>break</code>, code continues to next case</p>
+        </div>
+        <div class="lang-box" dir="ltr">
+          <span class="lang-label en-label">✓ do-while runs ≥ once</span>
+          <p>Condition checked AFTER body</p>
+        </div>
+        <div class="lang-box" dir="ltr">
+          <span class="lang-label en-label">✓ Arrays are 0-indexed</span>
+          <p>Last index = <code>length - 1</code></p>
+        </div>
+        <div class="lang-box" dir="ltr">
+          <span class="lang-label en-label">✓ Shallow vs Deep copy</span>
+          <p>Shallow: same reference. Deep: new array, independent copy.</p>
+        </div>
+        <div class="lang-box" dir="ltr">
+          <span class="lang-label en-label">✓ Math.random()</span>
+          <p><code>(int)(Math.random()*(max-min+1)+min)</code></p>
+        </div>
+        <div class="lang-box" dir="ltr">
+          <span class="lang-label en-label">✓ indexOf → -1 if not found</span>
+          <p>Works for both String.indexOf() and array search</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>Computer Programming 1 — Bilingual Summary | Faculty of Information Technology — CS Dept.</p>
+  <p style="margin-top:0.3rem;">تحتوي هذه المادة على 11 تشابتر موزعة على 6 فصول | Covers 11 chapters across 6 topics</p>
+</footer>
+
+<script>
+  function toggle(header) {
+    const chapter = header.closest('.chapter');
+    chapter.classList.toggle('open');
+    const body = chapter.querySelector('.chapter-body');
+    body.style.display = chapter.classList.contains('open') ? 'block' : 'none';
+  }
+
+  function openAll() {
+    document.querySelectorAll('.chapter').forEach(ch => {
+      ch.classList.add('open');
+      ch.querySelector('.chapter-body').style.display = 'block';
+    });
+  }
+
+  function closeAll() {
+    document.querySelectorAll('.chapter').forEach(ch => {
+      ch.classList.remove('open');
+      ch.querySelector('.chapter-body').style.display = 'none';
+    });
+  }
+
+  // init display state
+  document.querySelectorAll('.chapter').forEach(ch => {
+    const body = ch.querySelector('.chapter-body');
+    if (body) body.style.display = ch.classList.contains('open') ? 'block' : 'none';
+  });
+</script>
+</body>
+</html>
